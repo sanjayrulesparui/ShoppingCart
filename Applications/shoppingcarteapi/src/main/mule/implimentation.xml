@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="updateCartItem" doc:id="69e997b4-c92e-45af-a10a-0b38b12d2c6c" >
+		<ee:transform doc:name="Transform Message" doc:id="16709042-c2e2-45ff-aebf-7b4364d06237" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "itemId": payload.itemId,
+  "quantity": payload.quantity,
+  "cartId": payload.cartId,
+   "customerId": payload.customerId
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<http:request method="PATCH" doc:name="Patch - Add to cart" doc:id="0562c8ff-8881-4c01-9659-303368ba02f4" config-ref="SCHTTP" path="${sc.addToCart}"/>
+		<logger level="INFO" doc:name="Logger" doc:id="57902d3d-5b02-4427-8f46-0eab6c9a8075" message="end"/>
+	</sub-flow>
+	<sub-flow name="AddToCart" doc:id="d00ee92e-1308-4e7e-816b-262232be16e7" >
+		<logger level="INFO" doc:name="Logger" doc:id="d04746bf-1e5d-44ab-98f2-0b0a0b766be8" message="end"/>
+	</sub-flow>
+</mule>

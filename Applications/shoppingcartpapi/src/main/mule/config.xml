@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation=" http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
+    <http:listener-config name="shoppingcartpapi-httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="8081" />
+    </http:listener-config>
+    <apikit:config name="shoppingcartpapi-config" api="resource::72b2a063-0a26-4a5c-a320-b406b8b844ed:shoppingcartpapi:1.0.1:raml:zip:shoppingcartpapi.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+	<configuration-properties doc:name="Configuration properties" doc:id="b1b8772e-4299-43ba-905a-92eb57fefe89" file="mule-prop.yaml" />
+	<http:request-config name="SCHTTP" doc:name="HTTP Request configuration" doc:id="cfee7602-8355-4d29-bc52-59e4e9b7ee2c" >
+		<http:request-connection host="${sc.server}" />
+	</http:request-config>
+	<api-gateway:autodiscovery apiId="17715956" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="ccfd29ea-31b3-46cc-a2a9-b709d0477294" flowRef="shoppingcartpapi-main" />
+</mule>

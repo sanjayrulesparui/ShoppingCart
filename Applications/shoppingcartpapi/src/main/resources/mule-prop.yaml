@@ -1,0 +1,6 @@
+sc:
+  server: mysqlsapi.us-e2.cloudhub.io
+  updateCartLine: /api/updateCartLine
+  listCartItem: /api/listCartItems
+  createCart: /api/createCart
+  createCartLine: /api/createCartLine

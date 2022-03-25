@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_cf7c4a9e_36d8_4e32_a71d_68bddefaaab0_Output_Variables_cartId = Any
+

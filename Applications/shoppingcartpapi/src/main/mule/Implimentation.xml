@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="updateShoppingCart" doc:id="2d0cd5e0-3d2a-440e-b3df-040d91c802cb" >
+		<logger level="INFO" doc:name="Logger" doc:id="a485d6e8-d478-49ff-91ce-7e56d7676e0d" />
+		<set-variable value="#[payload.cartId default '']" doc:name="cartId" doc:id="8c896516-fc45-4288-bb83-725408020357" variableName="cartId"/>
+		<ee:transform doc:name="Transform Message" doc:id="ece6a59f-3311-4810-a4f0-07a437f99397" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "itemId": payload.itemId,
+  "quantity": payload.quantity,
+  "cartId": payload.cartid
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<http:request method="PATCH" doc:name="Update Cart" doc:id="c9596b66-4003-4850-8e27-059633104a54" config-ref="SCHTTP" path="${sc.updateCartLine}"/>
+		<http:request method="GET" doc:name="List cart" doc:id="e1699fb8-2491-457e-be7f-830323aa3df2" config-ref="SCHTTP" path="${sc.listCartItem}">
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	cartId : vars.cartId
+}]]]></http:query-params>
+		</http:request>
+		<logger level="INFO" doc:name="Logger" doc:id="6ece85a8-6d93-4434-b2fe-c693bb8247a7" message="end" />
+	</sub-flow>
+	<sub-flow name="ListCartItems" doc:id="cf7c4a9e-36d8-4e32-a71d-68bddefaaab0" >
+		<http:request method="GET" doc:name="List cart" doc:id="2d9cbbd2-4612-451a-adc0-df6f903637a1" config-ref="SCHTTP" path="${sc.listCartItem}" >
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	cartId : vars.cartId
+}]]]></http:query-params>
+		</http:request>
+		<logger level="INFO" doc:name="Logger" doc:id="b8bc561a-020a-41a8-aeec-9bb6dcf9d568" message="end" />
+	</sub-flow>
+	<sub-flow name="AddToCart" doc:id="0c3ceac0-1aa5-463e-860e-8ff848b80a7f" >
+		<set-variable value="#[payload]" doc:name="initPayload" doc:id="2e7e7656-016f-4573-bf22-2fe13a557766" variableName="initPayload"/>
+		<flow-ref doc:name="GetCartInfo" doc:id="6baccd45-1e5c-4202-8598-1e1bc78f2d13" name="ListCartItems"/>
+		<choice doc:name="check if Cart Exist" doc:id="11aa7ef7-5ab6-47bb-b997-7d4f705ca054" >
+			<when expression="#[payload.cartId !=null]">
+				<logger level="INFO" doc:name="Adding to cart" doc:id="bf2ea93d-11b9-48e6-ba99-91a450363bd3" message="Adding to cart"/>
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Create Cart" doc:id="c6028873-1981-4434-88da-b1361365c612" message="Create Cart"/>
+				<http:request method="POST" doc:name="Create Cart" doc:id="eefc05a0-1e61-467e-ac9b-1fb2c3eb825f" config-ref="SCHTTP" path="${sc.createCart}" >
+					<http:body ><![CDATA[#[vars.initPayload]]]></http:body>
+				</http:request>
+				<logger level="INFO" doc:name="Cart Created" doc:id="32f307bb-5006-4686-b8e7-b4e786c0da7e" message="Cart Created" />
+			</otherwise>
+		</choice>
+		<ee:transform doc:name="Transform Message" doc:id="3c9e82e9-e101-4c01-8d32-462481b3aace" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	cartId: payload.cartId,
+	customerId: vars.initPayload.customerId,
+	itemId: vars.initPayload.itemId,
+	price: vars.initPayload.price,
+	quantity: vars.initPayload.quantity,
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<http:request method="POST" doc:name="Create Cart line" doc:id="a2539fa5-9622-4544-bbf3-bed22ff93ad9" config-ref="SCHTTP" path="${sc.createCartLine}" >
+		</http:request>
+		<logger level="INFO" doc:name="Logger" doc:id="d36f4739-9f96-4a9c-86f1-9669db31ac78" message="Cart Updated"/>
+	</sub-flow>
+</mule>
