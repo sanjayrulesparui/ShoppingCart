@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation=" http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
+    <db:config name="MySQL_Database_Config" doc:name="Database Config" doc:id="d472c7ac-3d4f-47c6-96f6-b2da112b8fc3">
+        <db:my-sql-connection host="${mysql.host}" port="${mysql.port}" user="${mysql.user}" password="${mysql.pw}" database="${mysql.db}" />
+    </db:config>
+    <http:listener-config name="mysqlsapi-httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="8081" />
+    </http:listener-config>
+    <apikit:config name="mysqlsapi-config" api="resource::72b2a063-0a26-4a5c-a320-b406b8b844ed:mysqlsapi:1.0.2:raml:zip:mysqlsapi.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+	<configuration-properties doc:name="Configuration properties" doc:id="3cebafb6-0eae-4120-987d-dd33a492c8ca" file="mule-deploy.yaml" />
+ 
+	<api-gateway:autodiscovery apiId="17710487" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="0c6423be-ddd3-4cb5-ad1b-fc292f227de6" flowRef="mysqlsapi-main" />
+
+</mule>

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="CreateCart" doc:id="335630ab-9cac-4332-a766-51f45c5527ab" >
+		<set-variable value="#[payload.customerId]" doc:name="customerId" doc:id="a37dba43-d048-4bea-aa68-42a04c9d348c" variableName="customerId"/>
+		<db:query-single doc:name="Query single" doc:id="457603c6-621b-4624-be67-bfb4637c166b" config-ref="MySQL_Database_Config">
+			<db:sql><![CDATA[select cartId from `CART` where customerId = :lcustomerId]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+	lcustomerId:vars.customerId
+}]]]></db:input-parameters>
+		</db:query-single>
+		<choice doc:name="Choice" doc:id="073c3c0f-d8ed-4a48-af5b-22b82d9fe5c5" >
+			<when expression="#[payload[0] == null]">
+				<db:select doc:name="Select" doc:id="14bb293b-d96f-497f-bb66-95ac08ab14ca" config-ref="MySQL_Database_Config" target="count">
+			<db:sql><![CDATA[SELECT count(*) FROM `CART` WHERE 1=1;]]></db:sql>
+		</db:select>
+				<db:insert doc:name="Insert" doc:id="e343f7e7-2c44-4219-bb0e-830aeac9a3ee" config-ref="MySQL_Database_Config">
+			<db:sql><![CDATA[INSERT INTO `CART`(`CustomerId`, `CartId`, `Modified_Date`) VALUES (:lcustomerid,:lcount,now())
+]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+	lcount: (vars.count[0][0] default 0) + 1,
+	lcustomerid: vars.customerId
+}]]]></db:input-parameters>
+		</db:insert>
+				<db:query-single doc:name="Query single" doc:id="65f2508c-f39d-449f-ab6e-0d7207b87d20" config-ref="MySQL_Database_Config">
+			<db:sql><![CDATA[select cartId from `CART` where customerId = :lcustomerId]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+	lcustomerId:vars.customerId
+}]]]></db:input-parameters>
+		</db:query-single>
+				<ee:transform doc:name="Transform Message" doc:id="f9eadcb8-f13a-42fe-8c34-09e37cb9d419">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+
+cartId:payload[0],
+customerId:vars.customerId
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+				<logger level="INFO" doc:name="Logger" doc:id="a712794a-6214-4c85-ab86-2a3e8cecbacd" />
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Transform Message" doc:id="da636c9a-4c01-477d-8d8d-c003ffc55c87" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+
+cartId:payload[0],
+customerId:vars.customerId
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+	</sub-flow>
+	<sub-flow name="CreateCartLines" doc:id="e42dd6c1-934b-4206-b6cf-6331d34dfb94" >
+		<set-variable value="#[payload]" doc:name="initPayload" doc:id="a2139099-c0ae-4ad8-8a1c-bdf3f3a03eb2" variableName="initPayload"/>
+		<db:select doc:name="query Cart Line" doc:id="7fcca877-17ab-433d-a9c8-3c7a3308b2c8" config-ref="MySQL_Database_Config" target="count">
+			<db:sql ><![CDATA[SELECT * FROM `cartLines` WHERE cartId = :lcartId and itemId = :litemId]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	lcartId: payload.cartId,
+	litemId: payload.itemId
+	
+	}]]]></db:input-parameters>
+		</db:select>
+		<set-payload value="#[vars.initPayload]" doc:name="Set Payload" doc:id="c721ab86-d3bf-4955-9906-fb0337f1d173" />
+		<choice doc:name="Choice" doc:id="b19cf1d8-adda-4c9e-9cae-21cb49b41b57" >
+			<when expression="#[vars.count[0] != null]">
+				<flow-ref doc:name="updateCartItem" doc:id="19a3cb88-dd52-4e43-a718-74334c8f82d8" name="updateCartItem" />
+			</when>
+			<otherwise>
+				<db:insert doc:name="Insert" doc:id="44edf4a3-d48d-46c2-a11c-32684f73bc5d" config-ref="MySQL_Database_Config">
+			<db:sql><![CDATA[INSERT INTO `cartLines`(`cartId`, `itemId`, `quantity`, `creation_date`, `last_Modified_Date`) VALUES (:lcartId, :litemId,:lquantity,now(),now());]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+	lcartId: payload.cartId,
+	litemId: payload.itemId,
+	lquantity: payload.quantity
+	
+	}]]]></db:input-parameters>
+		</db:insert>
+			</otherwise>
+		</choice>
+		<ee:transform doc:name="Transform Message" doc:id="0ee39d79-ecad-433e-a616-7e551c7ac2b6" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"status":"Success"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</sub-flow>
+	<sub-flow name="ListCartItems" doc:id="ae689263-f736-4c74-9dbc-5a976210eb47" >
+		<db:select doc:name="Select" doc:id="27ea73b1-6acc-4c84-9e6d-640b8fd8a043" config-ref="MySQL_Database_Config">
+			<db:sql ><![CDATA[SELECT ct.CustomerId, ct.CartId, ctl.itemId, ctl.quantity from CART ct, cartLines ctl WHERE ctl.cartId = ct.CartId and ctl.cartId = :lcartId]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	lcartId: attributes.queryParams.cartId
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="200fad00-1877-41cc-abbb-7947c491caaf" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[output application/json
+---
+
+{
+	customerId: payload[0].customerId,
+	cartId: payload[0].cartId,
+	cart: payload map (data, index)->{
+		itemId: data.itemid,
+        quantity: data.quantity
+		
+	}
+	}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</sub-flow>
+	<sub-flow name="updateCartItem" doc:id="16e55752-47bb-4792-a31d-35c76cdb871f" >
+		<db:update doc:name="Update" doc:id="d4a4542f-6481-41aa-bee3-cf4eef39e2dc" config-ref="MySQL_Database_Config">
+			<db:sql ><![CDATA[UPDATE `cartLines` SET `quantity`= :lquantity, `last_Modified_Date` = now() WHERE itemId= :litemId and cartId= :lcartId]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	litemId:payload.itemId,
+	lquantity: payload.quantity,
+	lcartId:payload.cartId
+}]]]></db:input-parameters>
+		</db:update>
+		<ee:transform doc:name="Transform Message" doc:id="c6d9590c-bec5-4cee-945e-3eb625c42fc5" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	Status: "Success"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="b3919d65-c7a8-4b8e-aab5-7b42f403ccdd" />
+	</sub-flow>
+</mule>
