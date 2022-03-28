@@ -4,3 +4,8 @@ sc:
   listCartItem: /api/listCartItems
   createCart: /api/createCart
   createCartLine: /api/createCartLine
+  
+
+client:
+  id: a0c629ad382a49d59d1b68a09219c50c
+  secret: 4036126DC79f4C9DBE143184636623Bd

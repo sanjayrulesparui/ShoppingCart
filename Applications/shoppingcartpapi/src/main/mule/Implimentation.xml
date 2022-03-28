@@ -20,13 +20,26 @@ output application/json
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<http:request method="PATCH" doc:name="Update Cart" doc:id="c9596b66-4003-4850-8e27-059633104a54" config-ref="SCHTTP" path="${sc.updateCartLine}"/>
+		<http:request method="PATCH" doc:name="Update Cart" doc:id="c9596b66-4003-4850-8e27-059633104a54" config-ref="SCHTTP" path="${sc.updateCartLine}">
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"client_id" : "a0c629ad382a49d59d1b68a09219c50c",
+	"client_secret" : "4036126DC79f4C9DBE143184636623Bd"
+}]]]></http:headers>
+		</http:request>
 		<http:request method="GET" doc:name="List cart" doc:id="e1699fb8-2491-457e-be7f-830323aa3df2" config-ref="SCHTTP" path="${sc.listCartItem}">
 			<http:query-params ><![CDATA[#[output application/java
 ---
 {
 	cartId : vars.cartId
 }]]]></http:query-params>
+<http:headers ><![CDATA[#[output application/java
+---
+{
+	"client_secret" : "4036126DC79f4C9DBE143184636623Bd",
+	"client_id" : "a0c629ad382a49d59d1b68a09219c50c"
+}]]]></http:headers>
 		</http:request>
 		<logger level="INFO" doc:name="Logger" doc:id="6ece85a8-6d93-4434-b2fe-c693bb8247a7" message="end" />
 	</sub-flow>
@@ -37,6 +50,12 @@ output application/json
 {
 	cartId : vars.cartId
 }]]]></http:query-params>
+<http:headers ><![CDATA[#[output application/java
+---
+{
+	"client_id" : "a0c629ad382a49d59d1b68a09219c50c",
+	"client_secret" : "4036126DC79f4C9DBE143184636623Bd"
+}]]]></http:headers>
 		</http:request>
 		<logger level="INFO" doc:name="Logger" doc:id="b8bc561a-020a-41a8-aeec-9bb6dcf9d568" message="end" />
 	</sub-flow>
@@ -51,6 +70,12 @@ output application/json
 				<logger level="INFO" doc:name="Create Cart" doc:id="c6028873-1981-4434-88da-b1361365c612" message="Create Cart"/>
 				<http:request method="POST" doc:name="Create Cart" doc:id="eefc05a0-1e61-467e-ac9b-1fb2c3eb825f" config-ref="SCHTTP" path="${sc.createCart}" >
 					<http:body ><![CDATA[#[vars.initPayload]]]></http:body>
+					<http:headers ><![CDATA[#[output application/java
+---
+{
+	"client_secret" : "4036126DC79f4C9DBE143184636623Bd",
+	"client_id" : "a0c629ad382a49d59d1b68a09219c50c"
+}]]]></http:headers>
 				</http:request>
 				<logger level="INFO" doc:name="Cart Created" doc:id="32f307bb-5006-4686-b8e7-b4e786c0da7e" message="Cart Created" />
 			</otherwise>
@@ -70,6 +95,12 @@ output application/json
 			</ee:message>
 		</ee:transform>
 		<http:request method="POST" doc:name="Create Cart line" doc:id="a2539fa5-9622-4544-bbf3-bed22ff93ad9" config-ref="SCHTTP" path="${sc.createCartLine}" >
+		<http:headers ><![CDATA[#[output application/java
+---
+{
+	"client_id" : "a0c629ad382a49d59d1b68a09219c50c",
+	"client_secret" : "4036126DC79f4C9DBE143184636623Bd"
+}]]]></http:headers>
 		</http:request>
 		<logger level="INFO" doc:name="Logger" doc:id="d36f4739-9f96-4a9c-86f1-9669db31ac78" message="Cart Updated"/>
 	</sub-flow>
