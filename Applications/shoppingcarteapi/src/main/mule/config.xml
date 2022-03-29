@@ -15,6 +15,7 @@ http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/m
     <http:request-config name="SCHTTP" doc:name="HTTP Request configuration" doc:id="dc6f1efb-cc83-47a0-9e4f-bb44efeac9c5" >
 		<http:request-connection host="${sc.server}" />
 	</http:request-config>
+	<configuration doc:name="Configuration" doc:id="1f425194-41b5-430b-a1e8-56433046e85e" defaultErrorHandler-ref="globalErrorHandler" />
 	<!--
 	<api-gateway:autodiscovery apiId="17716047" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="c9936114-98f4-4f3c-a3aa-77b54c3c51e5" flowRef="shoppingcarteapi-main" />
 	-->

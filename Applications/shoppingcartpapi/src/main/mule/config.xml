@@ -10,4 +10,5 @@ http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/m
 		<http:request-connection host="${sc.server}" />
 	</http:request-config>
 	<api-gateway:autodiscovery apiId="17715956" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="ccfd29ea-31b3-46cc-a2a9-b709d0477294" flowRef="shoppingcartpapi-main" />
+	<configuration doc:name="Configuration" doc:id="97e5ebfc-b888-4ab2-9cb7-05b56ee5ce3d" defaultErrorHandler-ref="globalErrorHandler" />
 </mule>

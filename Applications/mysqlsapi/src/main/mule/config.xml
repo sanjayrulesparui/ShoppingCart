@@ -11,5 +11,6 @@ http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/m
 	<configuration-properties doc:name="Configuration properties" doc:id="3cebafb6-0eae-4120-987d-dd33a492c8ca" file="mule-deploy.yaml" />
  
 	<api-gateway:autodiscovery apiId="17710487" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="0c6423be-ddd3-4cb5-ad1b-fc292f227de6" flowRef="mysqlsapi-main" />
+	<configuration doc:name="Configuration" doc:id="5fffe928-6c79-4896-9e22-d59027792375" defaultErrorHandler-ref="globalErrorHandler" />
 
 </mule>
