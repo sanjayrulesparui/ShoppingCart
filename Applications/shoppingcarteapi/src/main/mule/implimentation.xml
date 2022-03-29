@@ -20,7 +20,14 @@ output application/json
 ]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<http:request method="PATCH" doc:name="Patch - Add to cart" doc:id="0562c8ff-8881-4c01-9659-303368ba02f4" config-ref="SCHTTP" path="${sc.addToCart}"/>
+		<http:request method="PATCH" doc:name="Patch - Add to cart" doc:id="0562c8ff-8881-4c01-9659-303368ba02f4" config-ref="SCHTTP" path="${sc.addToCart}">
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"client_secret" : p('client.secret'),
+	"client_id" : p('client.id')
+}]]]></http:headers>
+		</http:request>
 		<logger level="INFO" doc:name="Logger" doc:id="57902d3d-5b02-4427-8f46-0eab6c9a8075" message="end"/>
 	</sub-flow>
 	<sub-flow name="AddToCart" doc:id="d00ee92e-1308-4e7e-816b-262232be16e7" >

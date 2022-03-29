@@ -24,8 +24,8 @@ output application/json
 			<http:headers ><![CDATA[#[output application/java
 ---
 {
-	"client_id" : "a0c629ad382a49d59d1b68a09219c50c",
-	"client_secret" : "4036126DC79f4C9DBE143184636623Bd"
+	"client_id" : p('client.id'),
+	"client_secret" : p('client.secret')
 }]]]></http:headers>
 		</http:request>
 		<http:request method="GET" doc:name="List cart" doc:id="e1699fb8-2491-457e-be7f-830323aa3df2" config-ref="SCHTTP" path="${sc.listCartItem}">
@@ -37,8 +37,8 @@ output application/json
 <http:headers ><![CDATA[#[output application/java
 ---
 {
-	"client_secret" : "4036126DC79f4C9DBE143184636623Bd",
-	"client_id" : "a0c629ad382a49d59d1b68a09219c50c"
+	"client_id" : p('client.id'),
+	"client_secret" : p('client.secret')
 }]]]></http:headers>
 		</http:request>
 		<logger level="INFO" doc:name="Logger" doc:id="6ece85a8-6d93-4434-b2fe-c693bb8247a7" message="end" />
@@ -53,8 +53,8 @@ output application/json
 <http:headers ><![CDATA[#[output application/java
 ---
 {
-	"client_id" : "a0c629ad382a49d59d1b68a09219c50c",
-	"client_secret" : "4036126DC79f4C9DBE143184636623Bd"
+	"client_id" : p('client.id'),
+	"client_secret" : p('client.secret')
 }]]]></http:headers>
 		</http:request>
 		<logger level="INFO" doc:name="Logger" doc:id="b8bc561a-020a-41a8-aeec-9bb6dcf9d568" message="end" />
@@ -73,8 +73,8 @@ output application/json
 					<http:headers ><![CDATA[#[output application/java
 ---
 {
-	"client_secret" : "4036126DC79f4C9DBE143184636623Bd",
-	"client_id" : "a0c629ad382a49d59d1b68a09219c50c"
+	"client_id" : p('client.id'),
+	"client_secret" : p('client.secret')
 }]]]></http:headers>
 				</http:request>
 				<logger level="INFO" doc:name="Cart Created" doc:id="32f307bb-5006-4686-b8e7-b4e786c0da7e" message="Cart Created" />
@@ -98,8 +98,8 @@ output application/json
 		<http:headers ><![CDATA[#[output application/java
 ---
 {
-	"client_id" : "a0c629ad382a49d59d1b68a09219c50c",
-	"client_secret" : "4036126DC79f4C9DBE143184636623Bd"
+	"client_secret" : p('client.secret'),
+	"client_id" : p('client.id')
 }]]]></http:headers>
 		</http:request>
 		<logger level="INFO" doc:name="Logger" doc:id="d36f4739-9f96-4a9c-86f1-9669db31ac78" message="Cart Updated"/>

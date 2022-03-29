@@ -1,3 +1,7 @@
 sc:
   server: shoppingcartpapi.us-e2.cloudhub.io
   addToCart: /api/addToCart
+  
+client:
+  id: 7075b4f2c0004bbebed89750e604d7f9
+  secret: 13c5dC86458B48CdaCC6b7fbFbAAd40e
